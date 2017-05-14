@@ -758,7 +758,14 @@ sign_domain() {
   ln -sf "fullchain-${timestamp}.pem" "${CERTDIR}/${domain}/fullchain.pem"
   ln -sf "cert-${timestamp}.csr" "${CERTDIR}/${domain}/cert.csr"
   ln -sf "cert-${timestamp}.pem" "${CERTDIR}/${domain}/cert.pem"
-
+  
+  # Some servers, such as naviserver/nsssl require privkey.pem appended to fullchain.pem
+  # Create a server.pem A file consisting of privkey.pem >> fullchain.pem
+  rm -f ${CERTDIR}/${domain}/server.pem
+  cp ${CERTDIR}/${domain}/fullchain.pem ${CERTDIR}/${domain}/server.pem
+  cat ${CERTDIR}/${domain}/privkey.pem >> ${CERTDIR}/${domain}/server.pem
+  chmod 770 ${CERTDIR}/${domain}/server.pem
+  
   # Wait for hook script to clean the challenge and to deploy cert if used
   [[ -n "${HOOK}" ]] && "${HOOK}" "deploy_cert" "${domain}" "${CERTDIR}/${domain}/privkey.pem" "${CERTDIR}/${domain}/cert.pem" "${CERTDIR}/${domain}/fullchain.pem" "${CERTDIR}/${domain}/chain.pem" "${timestamp}"
 
