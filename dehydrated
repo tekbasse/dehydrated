@@ -751,12 +751,6 @@ sign_domain() {
   walk_chain "${crt_path}" > "${CERTDIR}/${domain}/chain-${timestamp}.pem"
   cat "${CERTDIR}/${domain}/chain-${timestamp}.pem" >> "${CERTDIR}/${domain}/fullchain-${timestamp}.pem"
 
-  # Create server.pem
-  rm -f "${CERTDIR}/${domain}/server.pem"
-  cat "${CERTDIR}/${domain}/fullchain-${timestamp}.pem" >> "${CERTDIR}/${domain}/server.pem"
-  cat "${CERTDIR}/${domain}/privkey.pem" >> "${CERTDIR}/${domain}/server.pem"
-  chmod 770 "${CERTDIR}/${domain}/server.pem"
-
   # Update symlinks
   [[ "${privkey}" = "privkey.pem" ]] || ln -sf "privkey-${timestamp}.pem" "${CERTDIR}/${domain}/privkey.pem"
 
